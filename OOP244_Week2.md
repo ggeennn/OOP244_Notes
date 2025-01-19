@@ -1,6 +1,7 @@
 # OOP244 Week 2 - Types, Function Overloading and Memory Management 📚
 > C++类型、函数重载与内存管理 | C++ Types, Function Overloading and Memory Management
-
+https://intro2oop.sdds.ca/B-Foundations/types-overloading-and-references
+https://intro2oop.sdds.ca/B-Foundations/dynamic-memory
 ## 文档信息 (Document Information) 📋
 更新日期 | Update Date：2024-03-19
 版本号 | Version：v1.0

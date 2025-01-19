@@ -1,5 +1,8 @@
 # OOP244 Week 1 - Introduction to Object-Oriented Programming 📚
 > 面向对象编程导论 | Introduction to Object-Oriented Programming
+https://intro2oop.sdds.ca/A-Introduction/welcome-to-oo
+https://intro2oop.sdds.ca/A-Introduction/object-terminology
+https://intro2oop.sdds.ca/A-Introduction/modular-programming
 
 ## 文档信息 (Document Information) 📋
 更新日期 | Update Date：2024-03-19
