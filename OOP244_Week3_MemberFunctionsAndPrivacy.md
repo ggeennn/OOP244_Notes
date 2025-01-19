@@ -1,5 +1,5 @@
 # OOP244 Week 3 - Member Functions and Privacy 📚
-
+https://intro2oop.sdds.ca/C-Encapsulation/member-functions-and-privacy
 ## 学习路径图 (Learning Path) 🗺️
 ```
 Member Functions & Privacy
@@ -48,11 +48,12 @@ Member Functions & Privacy
 
 ```cpp
 // 声明示例 | Declaration Example
-struct Student {
+class Student {
+private:
     int no;
     float grade[NG];
     int ng; // 成员变量定义
-    
+public:
     void display() const; // The const qualifier identifies the member function as a query.
     void set(int id, const float* grades, int count); // 修改函数声明
     void initialize(); // 特殊函数声明
@@ -64,31 +65,37 @@ void Student::display() const {
     for (int i = 0; i < ng; i++)
         cout << grade[i] << endl;
 }
-
-// 修改函数定义示例 | Modifier Example
-void Student::set(int id, const float* grades, int count) {
-    studentId_ = id; // 修改学生ID
-    numGrades_ = count; // 设置成绩数量
-    for (int i = 0; i < count; i++) {
-        grades_[i] = grades[i]; // 存储成绩
-    }
+void Student::set(int id, const float* grades, int ng_) {
+    no = id;
+    ng = ng_<NG?ng_:NG;
+    for (int i = 0; i < ng; i++)
+        grade[i] = grades[i];
 }
 
-// 特殊函数定义示例 | Special Example
-void Student::initialize() {
-    studentId_ = 0; // 初始化学生ID
-    numGrades_ = 0; // 初始化成绩数量
-    for (int i = 0; i < 20; i++) {
-        grades_[i] = 0.0f; // 初始化成绩为0
-    }
+// 定义成员函数     特殊函数定义示例 | Special Example
+void Student::initialize(int id, int count) {
+    studentId_ = id; // 访问成员变量
+    numGrades_ = count; // 访问成员变量
+    // 可以在这里调用 display() 函数
+    ::display(); // calls the global function(display:another function defined globally)
+    display(); // 直接调用同一类中的另一个成员函数
 }
+
+
+
+// 在主函数中, Client code calls a member function in the same way that an instance of a struct refers to one of its data members.
+Student harry; // 创建结构体对象
+harry.studentId_ = 123; // 访问并设置成员变量
+harry.display(); // 调用成员函数
 ```
 
 💡 实践提示 | Practice Tips
 - 声明在类定义内部
 - 定义在类定义外部
-- 定义时需要使用作用域解析运算符 `::`
+- 定义时需要使用作用域解析运算符（Scope Resolution Operator） `::`
 - `const` 成员函数不能修改对象的数据
+- The Student:: prefix on the function name identifies it as a member of our Student type
+- 在类外部定义成员函数时，需要使用类名和作用域解析运算符 `::` 来标识该函数是类的成员函数。
 
 ### Privacy (私有性) 🟡
 
@@ -102,12 +109,13 @@ void Student::initialize() {
    - 只能被类的成员函数访问
    
 2. **public:**
+   -  struct 的成员默认公有
    - 可以被任何代码访问
    - 通常用于接口函数
 
 ```cpp
 class Student {
-private:
+//class成员默认 private:
     int no;
     float grade[NG];
     int ng;
@@ -143,30 +151,126 @@ void Student::set(int sn, const float* g, int ng_) {
 ### Input and Output Examples (输入输出示例) 🟢
 
 #### cin 操作 | cin Operations
-1. **基本输入** 🟢
+1. **基本输入语法** 🟢
 ```cpp
+// 基本语法
 cin >> variable;  // 基本输入操作
+
+// 多变量输入示例
+int i;
+char c;
+double x;
+char s[8];
+cin >> i >> c >> x >> s;  // 可以连续读取多个值
 ```
 
-2. **特殊成员函数** 🟡
-- `ignore()`: 忽略输入缓冲区的字符
-- `get()`: 获取字符
-- `getline()`: 获取一行
+2. **输入特性** 🟢
+- 自动跳过前导空白字符（空格、制表符、换行符）
+- 对数值类型、字符串类型和字符类型都会跳过空白
+- 类似于 C 语言中的 `scanf("%d")`, `scanf("%lf")`, `scanf("%s")`, `scanf(" %c")`
+
+3. **特殊成员函数** 🟡
+```cpp
+// ignore() 示例
+cin.ignore();           // 忽略一个字符
+cin.ignore(2000, '\n'); // 忽略最多2000个字符或直到遇到换行符
+
+// get() 和 getline() 示例
+char ch;
+cin.get(ch);           // 读取单个字符，包括空白字符
+char str[100];
+cin.getline(str, 100); // 读取一行，直到遇到换行符
+```
 
 #### cout 操作 | cout Operations
-1. **格式化输出** 🟢
+
+1. **字段宽度控制** 🟢
 ```cpp
-cout.width(10);    // 设置字段宽度
-cout.fill('*');    // 设置填充字符
-cout.precision(2); // 设置精度
+int attendance = 27;
+cout << "1234567890" << endl;    // 用于对齐参考
+cout.width(10);                  // 设置下一个输出字段宽度为10
+cout << attendance << endl;      // 输出: "        27"
+cout << attendance << endl;      // 输出: "27" (width设置仅对下一个字段有效)
 ```
 
-2. **格式标志** 🟡
+2. **填充字符设置** 🟢
 ```cpp
-cout.setf(ios::fixed);      // 固定格式
-cout.setf(ios::scientific); // 科学计数法
-cout.setf(ios::left);      // 左对齐
+cout.fill('*');                  // 设置填充字符为 '*'
+cout.width(10);
+cout << attendance << endl;      // 输出: "********27"
+// 填充字符设置会持续有效，直到被重新设置
 ```
+
+3. **格式化控制** 🟡
+```cpp
+double pi = 3.141592653;
+
+// 固定格式
+cout.setf(ios::fixed);          // 设置固定格式
+cout.precision(2);              // 设置精度为小数点后2位
+cout << pi << endl;             // 输出: "3.14"
+
+// 科学计数法
+cout.unsetf(ios::fixed);        // 取消固定格式
+cout.setf(ios::scientific);     // 设置科学计数法
+cout << pi << endl;             // 输出: "3.141593e+00"
+
+// 对齐控制
+cout.setf(ios::left);           // 左对齐
+cout.width(10);
+cout << pi << endl;             // 输出: "3.14      "
+cout.unsetf(ios::left);         // 取消左对齐
+```
+
+4. **格式标志持续性** ⚠️
+```cpp
+// 重要注意事项：
+// 1. width() 设置仅对下一个输出字段有效
+// 2. fill() 设置持续有效直到被重置
+// 3. precision() 设置持续有效直到被重置
+// 4. setf() 设置的格式标志持续有效直到被 unsetf()
+```
+
+5. **精度控制** 🟡
+```cpp
+double value = 123.456789;
+
+// 一般格式（默认）
+cout.precision(6);              // 设置精度为6
+cout << value << endl;          // 输出: "123.457"
+
+// 固定格式
+cout.setf(ios::fixed);
+cout.precision(2);
+cout << value << endl;          // 输出: "123.46"
+
+// 科学计数法
+cout.setf(ios::scientific);
+cout << value << endl;          // 输出: "1.23e+02"
+```
+
+### 格式化输出的注意事项 ⚠️
+
+1. **字段宽度 (width)**
+   - 只影响下一个输出操作
+   - 如果数据长度超过设定宽度，则完整显示数据
+   - 默认右对齐
+
+2. **填充字符 (fill)**
+   - 持续有效直到被重新设置
+   - 默认使用空格字符
+   - 在设定的字段宽度内填充未被数据占用的空间
+
+3. **格式标志 (setf/unsetf)**
+   - 多个格式标志可以同时使用
+   - 某些标志之间可能相互冲突
+   - 使用 unsetf() 可以取消之前的设置
+
+4. **精度设置 (precision)**
+   - 在不同格式下有不同的含义
+   - 一般格式：控制有效数字
+   - 固定格式：控制小数位数
+   - 科学计数法：控制小数位数
 
 ## FAQ (常见问题) ❓
 
