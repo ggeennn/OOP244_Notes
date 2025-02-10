@@ -36,18 +36,22 @@ Helper Functions
 #### 示例 | Example
 ```cpp
 // Student.h
+const int NG = 20;
+
 class Student {
     int no;
     float grade[NG];
     int ng;
 public:
-    // 公共查询函数
+    Student();
+    Student(int);
+    Student(int, const float*, int);
+    void display() const;
     int getStudentNo() const { return no; }
     int getNoGrades() const { return ng; }
     float getGrade(int i) const { return i < ng ? grade[i] : 0.0f; }
 };
 
-// 自由辅助函数声明
 bool areIdentical(const Student&, const Student&);
 
 // Student.cpp
@@ -58,10 +62,18 @@ bool areIdentical(const Student& lhs, const Student& rhs) {
         same = lhs.getGrade(i) == rhs.getGrade(i);
     return same;
 }
+
+// 客户端代码示例
+int main() {
+    float gh[] = {89.4f, 67.8f, 45.5f};
+    Student harry(1234, gh, 3), harry_(1234, gh, 3);
+    if (areIdentical(harry, harry_))
+        cout << "are identical" << endl;
+}
 ```
 
 #### 自由度的代价 | The Cost of Freedom 🟡
-- **类膨胀问题**: 为了支持自由辅助函数，可能需要添加额外的公共查询函数，导致类定义膨胀。
+- **类膨胀问题**: 为了支持自由辅助函数，可能需要添加额外的公共查询函数，导致类定义膨胀(class bloat)。
 - **解决方案**: 使用友元关系（friendship）作为替代方案。
 
 ### Helper Operators (辅助运算符) 🟡
@@ -75,34 +87,34 @@ bool areIdentical(const Student& lhs, const Student& rhs) {
 
 #### 示例：相等性比较 | Example: Identity Comparison
 ```cpp
-// 辅助运算符声明
-bool operator==(const Student&, const Student&);
+// 更新后的Student.h
+class Student {
+    int no;
+    float grade[NG];
+    int ng;
+    friend bool operator==(const Student&, const Student&);
+};
 
-// 辅助运算符定义
+// 实现文件
 bool operator==(const Student& lhs, const Student& rhs) {
-    bool same = lhs.getStudentNo() == rhs.getStudentNo() &&
-                lhs.getNoGrades() == rhs.getNoGrades();
-    for (int i = 0; i < lhs.getNoGrades() && same; i++)
-        same = lhs.getGrade(i) == rhs.getGrade(i);
+    bool same = lhs.no == rhs.no && lhs.ng == rhs.ng;
+    for (int i = 0; i < lhs.ng && same; i++)
+        same = lhs.grade[i] == rhs.grade[i];
     return same;
 }
 ```
 
 #### 示例：加法运算 | Example: Addition Operation
 ```cpp
-// 辅助运算符声明
-Student operator+(const Student&, float);
-Student operator+(float, const Student&);
-
-// 辅助运算符定义
-Student operator+(const Student& s, float grade) {
-    Student copy = s;    // 创建副本
-    copy += grade;       // 使用成员运算符
-    return copy;         // 返回更新后的副本
+// 完整加法运算符实现
+Student operator+(const Student& student, float grade) {
+    Student copy = student;
+    copy += grade;
+    return copy;
 }
 
-Student operator+(float grade, const Student& s) {
-    return s + grade;    // 调用第一个版本
+Student operator+(float grade, const Student& student) {
+    return student + grade;
 }
 ```
 
@@ -137,21 +149,41 @@ bool operator==(const Student& lhs, const Student& rhs) {
 2. 谨慎使用：只在需要读写访问权限时才授予友元关系
 3. 最强关系：友元关系是类能授予外部实体的最强关系
 
-#### 类友元（可选）| Class Friendship (Optional) 🔴
+#### 友元类特性 | Friendship Properties
+1. **非互惠性 (Non-reciprocal)**: 
+   - A是B的友元 ≠ B是A的友元
+2. **非传递性 (Non-transitive)**: 
+   - A是B的友元 + B是C的友元 ≠ A是C的友元
+3. **非排他性 (Non-exclusive)**:
+   - 一个类可以有多个友元
+   - 一个友元可以访问多个类的私有成员(只要这些类中有声明)
+
+
+#### 类友元示例 | Class Friendship Example
 ```cpp
+class Administrator; // 前向声明
+
 class Student {
     int no;
     float grade[NG];
     int ng;
 public:
-    friend class Administrator; // 类友元声明
+    friend class Administrator; // 授予Administrator访问权限
 };
 ```
 
-#### 友元关系特性 | Friendship Properties ⚠️
-- 非互惠性：A是B的友元，不意味着B是A的友元
-- 非传递性：A是B的友元，B是C的友元，不意味着A是C的友元
-- 非排他性：一个类可以有多个友元
+### 设计建议 | Design Tips ⚠️
+1. 优先使用非友元辅助函数
+2. 仅在需要读写私有数据时使用友元
+3. 避免过度使用类友元关系
+4. 保持友元函数数量最小化
+
+## 总结 | Summary 🟢
+1. 辅助函数通过参数访问类数据
+2. 辅助运算符应保持操作数不变
+3. 友元关系破坏封装性，需谨慎使用
+4. 自由辅助函数减少耦合但可能导致类膨胀
+5. 运算符重载应保持自然语义
 
 ## FAQ (常见问题) ❓
 

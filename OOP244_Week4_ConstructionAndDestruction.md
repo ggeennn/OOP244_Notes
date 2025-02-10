@@ -108,6 +108,31 @@ Student::Student() {
 }
 ```
 
+#### 初始化列表 | Initialization List
+- **定义 | Definition**: 初始化列表是一种在构造函数中初始化成员变量的语法。它在构造函数体执行之前执行，通常用于初始化常量成员、引用成员或需要复杂初始化的成员。
+- **语法 | Syntax**:
+```cpp
+ClassName::ClassName(parameters) : member1(value1), member2(value2) {
+    // 构造函数体
+}
+```
+
+- **示例 | Example**:
+```cpp
+class Student {
+    int no;
+    float grade;
+public:
+    // 使用初始化列表
+    Student(int studentNo, float initialGrade) : no(studentNo), grade(initialGrade) {
+        // 构造函数体，可以为空
+    }
+};
+
+// 创建对象
+Student harry(1234, 85.5f); // 使用初始化列表初始化成员
+```
+
 #### 默认行为 | Default Behavior
 - 如果类定义中没有声明构造函数，编译器会插入一个空体的默认构造函数。
 - **示例 | Example**:

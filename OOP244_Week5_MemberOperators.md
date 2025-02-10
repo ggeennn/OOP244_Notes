@@ -126,31 +126,91 @@ public:
 
 ### Type Conversion (类型转换) 🟡
 
+#### 隐式转换工作机制 | Implicit Conversion Mechanism
+当函数需要接收类的对象时，如果传递了其他类型的值，并且该类存在一个单参数的构造函数，编译器会自动调用这个构造函数进行转换
+
 #### bool 运算符 | bool Operator
 ```cpp
 class Student {
 public:
+    // bool类型转换运算符（隐式）
     operator bool() const {
         return no != 0; // 如果学号非零则返回true
     }
+
+    // bool类型转换运算符（显式）
+    explicit operator bool() const {
+        return no != 0;
+    }
 };
+
+// 隐式转换示例
+Student s;
+if (s) { } // 隐式转换为bool
+bool b1 = s; // 隐式转换为bool
+
+// 显式转换示例（当运算符声明为explicit时）
+if (static_cast<bool>(s)) { } // 显式转换为bool
+bool b2 = static_cast<bool>(s); // 显式转换为bool
+bool b3 = bool(s); // C风格显式转换
 ```
 
-#### 类型转换运算符 | Type Conversion Operators
+### 类型转换运算符 | Cast Operators
 ```cpp
 class Student {
 public:
-    // 单参数构造函数用于类型转换（显式）
+    // 隐式构造函数
+    Student(int sn) {
+        float g[] = {0.0f};
+        set(sn, g, 0);
+    }
+
+    // 显式构造函数
     explicit Student(int sn) {
         float g[] = {0.0f};
         set(sn, g, 0);
     }
+
+    // int类型转换运算符（隐式）
+    operator int() const {
+        return no;
+    }
+
+    // int类型转换运算符（显式）
+    explicit operator int() const {
+        return no;
+    }
 };
-Student s1 = 123; // 错误，隐式构造函数写法
+
+// 隐式构造函数调用
+Student s1 = 123; // 正确，允许隐式转换
+Student s2(123); // 正确，直接初始化
+Student s3 = {123}; // 正确，列表初始化
+void f(Student s) { }
+f(123); // 正确，允许隐式转换
+
+// 显式构造函数调用（当构造函数声明为explicit时）
+Student s1 = 123; // 错误，不允许隐式转换
 Student s2(123); // 正确，显式构造函数写法
+Student s3 = (Student)123; // 正确，C风格显式转换
+Student s4 = {123}; // 正确，列表初始化
+void f(Student s) { }
+f(123); // 错误，不允许隐式转换
+f(Student(123)); // 正确，显式转换
+
+// int类型转换运算符调用（隐式）
+Student s(123);
+int n1 = s; // 正确，隐式转换
+int n2(s); // 正确，隐式转换
+
+// int类型转换运算符调用（显式，当运算符声明为explicit时）
+Student s(123);
+int n1 = s; // 错误，不允许隐式转换
+int n2 = static_cast<int>(s); // 正确，显式转换
+int n3 = int(s); // 正确，C风格显式转换
 ```
 
-### Temporary Objects (临时对象) 🟡
+### Temporary Objects (临时对象) 🟡 同样会调用构造和析构函数
 
 #### 构造函数逻辑本地化 | Localizing Constructor Logic
 ```cpp
@@ -180,40 +240,6 @@ Student::Student(int sn) {
    - 前缀：先增加再返回引用
    - 后缀：先返回原值，再增加
    - 后缀运算符参数列表中需要int参数
-
-## 实践示例 (Practice Examples) 💻
-
-### 完整示例：学生类运算符重载
-```cpp
-class Student {
-    int no;
-    float grade[NG];
-    int ng;
-public:
-    // 赋值运算符
-    Student& operator=(const Student& src) {
-        if (this != &src) {
-            no = src.no;
-            ng = src.ng;
-            for (int i = 0; i < ng; i++)
-                grade[i] = src.grade[i];
-        }
-        return *this;
-    }
-    
-    // 加法赋值运算符
-    Student& operator+=(float g) {
-        if (no != 0 && ng < NG && g >= 0.f && g <= 100.f)
-            grade[ng++] = g;
-        return *this;
-    }
-    
-    // 类型转换运算符
-    operator bool() const {
-        return no != 0;
-    }
-};
-```
 
 ## 学习建议 (Study Tips) 💡
 
