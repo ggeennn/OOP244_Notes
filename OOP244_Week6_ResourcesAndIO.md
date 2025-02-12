@@ -1,5 +1,9 @@
-# OOP244_Week5_ResourcesAndIO.md
-
+# OOP244_Week6_ResourcesAndIO.md
+=============
+Unfinished:
+String Class (Optional)
+https://intro2oop.sdds.ca/C-Encapsulation/input-and-output-operators#string-class-optional
+=============
 ## 📚 概述 (Overview)
 本文档涵盖了OOP244中关于资源管理(Resource Management)和输入输出运算符(I/O Operators)的重要概念。这些是面向对象编程中的核心主题，对于理解C++类的深层机制至关重要。
 
