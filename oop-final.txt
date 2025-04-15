@@ -1,0 +1,44 @@
+//类类型重载（type conversion operator）
+Student::operator bool() const { return no != 0; }
+
+//operator overload:
+Employee& Employee::operator=(const Employee& src) {
+		if (this != &src) {
+		delete[] emp_hours;
+		Person::operator=(src); //=>(Person&)*this=src显式调用基类
+...}}
+
+// Getter/query/accessor function
+const Employee& print(std::ostream& os) const;
+	*** os.setf(ios::fixed);
+		os.width(10); 
+               os.precision(2);
+	    os.unsetf(ios::fixed);
+//Setter/mutator function
+Employee& read(std::istream&);
+// Helper functions
+std::istream& operator>>(std::istream&, Employee&);
+std::ostream& operator<<(std::ostream&, const Employee&);
+
+
+#include <fstream>
+//read file
+	std::ifstream fin("input.txt");
+	if (fin.is_open()) {
+		while (fin) {
+			fin >> i;
+//write to file
+	std::ofstream fout("output.txt");
+	if (fout.is_open()) {
+	fout << 1 << ", " << 3.14 << ", " << "Line" << std::endl;
+
+//input stream control
+if (cin.fail()) {	
+	cin.clear();
+	cin.ignore(2000, '\n');}  //get()和ignore()：读取/忽略当前并后移指针
+
+// =delete; =default; =0 区别
+
+//
+template<typename T, int N>
+Classname<int,5> a(arg1,arg2,...)
